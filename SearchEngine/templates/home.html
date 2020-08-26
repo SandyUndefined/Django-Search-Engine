@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}{{block.super}} HomePage {% endblock %}
+{% block content %}
+<div class="container">
+<div class="row">
+    <div class="col-lg-10">
+        <form >
+            {% csrf_token %}
+            <input type="text" placeholder="Search here..." class="form-control">
+        </form>
+    </div>
+</div>
+</div>
+{% endblock content %}

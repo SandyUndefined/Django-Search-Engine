@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link href='{% static "css/bootstrap.css" %}' rel="stylesheet">
+    <link href='{% static "css/fontawesome.css" %}'>
+    <link href='{% static "css/style.css" %}' rel="stylesheet">
+</head>
+<body>
+{% block content %}{% endblock content %}
+<script src='{% static "js/popper.js" %}'></script>
+<script src='{% static "js/jquery.js" %}'></script>
+<script src='{% static "js/bootstrap.js" %}'></script>
+<script src='{% static "js/fontawesome.js" %}'></script>
+</body>
+</html>
