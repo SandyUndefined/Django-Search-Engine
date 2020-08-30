@@ -2,7 +2,7 @@ body{
 background:#dae5ed;
 }
 
-.container {
+.wrapper {
   position: absolute;
   margin: auto;
   top: 0;
@@ -12,7 +12,7 @@ background:#dae5ed;
   width: 300px;
   height: 100px;
 }
-.container .search {
+.wrapper .search {
   position: absolute;
   margin: auto;
   top: 0;
@@ -27,10 +27,10 @@ background:#dae5ed;
   z-index: 4;
   box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.4);
 }
-.container .search:hover {
+.wrapper .search:hover {
   cursor: pointer;
 }
-.container .search::before {
+.wrapper .search::before {
   content: "";
   position: absolute;
   margin: auto;
@@ -44,7 +44,7 @@ background:#dae5ed;
   transform: rotate(45deg);
   transition: all .5s;
 }
-.container .search::after {
+.wrapper .search::after {
   content: "";
   position: absolute;
   margin: auto;
@@ -58,7 +58,7 @@ background:#dae5ed;
   border: 2px solid white;
   transition: all .5s;
 }
-.container input {
+.wrapper input {
   font-family: 'Inconsolata', monospace;
   position: absolute;
   margin: auto;
@@ -82,25 +82,25 @@ background:#dae5ed;
   font-weight: bolder;
   letter-spacing: 0.1em;
 }
-.container input:hover {
+.wrapper input:hover {
   cursor: pointer;
 }
-.container input:focus {
+.wrapper input:focus {
   width: 300px;
   opacity: 1;
   cursor: text;
 }
-.container input:focus ~ .search {
+.wrapper input:focus ~ .search {
   right: -250px;
   background: #151515;
   z-index: 6;
 }
-.container input:focus ~ .search::before {
+.wrapper input:focus ~ .search::before {
   top: 0;
   left: 0;
   width: 25px;
 }
-.container input:focus ~ .search::after {
+.wrapper input:focus ~ .search::after {
   top: 0;
   left: 0;
   width: 25px;
@@ -110,7 +110,7 @@ background:#dae5ed;
   border-radius: 0%;
   transform: rotate(-45deg);
 }
-.container input::placeholder {
+.wrapper input::placeholder {
   color: white;
   opacity: 0.5;
   font-weight: bolder;
