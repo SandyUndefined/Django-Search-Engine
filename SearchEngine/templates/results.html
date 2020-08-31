@@ -16,31 +16,37 @@
 </nav>
 <div class="container">
   <div class="row">
-    <div class="col">
-      <h2>Google</h2>
-      <div class="container">
-        {% for i in google %}
-          {{ i }} <br>
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <h4 class="panel panel-blue text-center" >Google</h4>
+        <div class="justify-content-center">
+          {% for i,j in google %}
+         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
         {% endfor %}
-      </div>
+        </div>
     </div>
-    <div class="col">
-      <h2>Yahoo</h2>
-      {% for i in yahoo %}
-        {{ i }} <br>
-      {% endfor %}
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <h4  class="panel panel-blue text-center" >Yahoo</h4>
+      <div class="justify-content-center">
+          {% for i,j in yahoo %}
+         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+        {% endfor %}
+        </div>
     </div>
-    <div class="col">
-      <h2>DuckDuckGo</h2>
-      {% for i in duck %}
-        {{ i }} <br>
-      {% endfor %}
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <h4  class="panel panel-blue text-center" >DuckDuckGo</h4>
+      <div class="justify-content-center">
+          {% for i,j in duck %}
+         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+        {% endfor %}
+        </div>
     </div>
-    <div class="col">
-      <h2>Ecosia</h2>
-      {% for i in ecosia %}
-        {{ i }} <br>
-      {% endfor %}
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <h4  class="panel panel-blue text-center" >Ecosia</h4>
+      <div class="justify-content-center">
+          {% for i,j in ecosia %}
+         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+        {% endfor %}
+        </div>
     </div>
   </div>
 </div>

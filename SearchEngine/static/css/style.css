@@ -1,5 +1,6 @@
 body{
 background:#dae5ed;
+overflow-x:hidden;
 }
 
 .wrapper {
@@ -114,4 +115,23 @@ background:#dae5ed;
   color: white;
   opacity: 0.5;
   font-weight: bolder;
+}
+.panel {
+  border-radius: 0.3rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.panel.panel-blue {
+  border: 1px solid #0087FF;
+  background-color: #DDEDFF;
+  color: #0087FF;
+}
+.btn{
+background-color:#dc3545;
+color:#fff;
+font-size:14px;
+}
+.btn:hover{
+opacity:0.8;
+color:#fff;
 }
