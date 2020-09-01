@@ -32,7 +32,7 @@ Step 6:  Open browser and type `http://127.0.0.1:8000/`
 - [ ] Yahoo returning `request.code` 500 
 - [ ] Can scrape to next or given set of pages
 
-## Feel free to Contribute?
+## Feel free to Contribute
 
 To fix a bug or create new feature, follow these steps:
 
