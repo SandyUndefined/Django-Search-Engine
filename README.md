@@ -15,17 +15,17 @@ _Scrapes links and text from different search engine and Displays it on a webpag
 
 Open cmd prompt and write following commands.
 
-Step 1: `git clone https://github.com/SandyUndefined/Django-Search-Engine.git`.
+Step 1: `git clone https://github.com/SandyUndefined/Django-Search-Engine.git`
 
-Step 2: `cd Django-Search-Engine`.
+Step 2: `cd Django-Search-Engine`
 
-Step 3: `pip install -r requirements.txt` or `pip3 install -r requirements.txt`.
+Step 3: `pip install -r requirements.txt` or `pip3 install -r requirements.txt`
 
-Step 4: `cd SearchEngine`.
+Step 4: `cd SearchEngine`
 
-Step 5: `manage.py runserver` or `python manage.py runserver`.
+Step 5: `manage.py runserver` or `python manage.py runserver`
 
-Step 6:  Open browser and type `http://127.0.0.1:8000/`.
+Step 6:  Open browser and type `http://127.0.0.1:8000/`
 
 ## Bugs to be fixed
 - [X] Remove ad links
