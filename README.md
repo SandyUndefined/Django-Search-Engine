@@ -1,7 +1,7 @@
 # Django-Search-Engine
 _Scrapes links and text from different search engine and Displays it on a webpage._
 
-##Supported Search engine
+## Supported Search engine
 - Google
 - Yahoo
 - DuckDuckGo
@@ -11,7 +11,7 @@ _Scrapes links and text from different search engine and Displays it on a webpag
 1. Removed Ad links.
 2. Scrap to the next page.(Incomplete)
 
-##How to Run
+## How to Run
 
 Open cmd prompt and write following commands.
 
@@ -27,12 +27,12 @@ Step 5: `manage.py runserver` or `python manage.py runserver`.
 
 Step 6:  Open browser and type `http://127.0.0.1:8000/`.
 
-##bugs to be fixed
-- [x] Remove ad links
+## Bugs to be fixed
+- &check; Remove ad links
 - [ ] Yahoo returning `request.code` 500 
 - [ ] Can scrape to next or given set of pages
 
-##Feel free to Contribute?
+## Feel free to Contribute?
 
 To fix a bug or create new feature, follow these steps:
 
