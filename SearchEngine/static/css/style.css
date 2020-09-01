@@ -1,6 +1,7 @@
 body{
 background:#dae5ed;
 overflow-x:hidden;
+height:auto;
 }
 
 .wrapper {
@@ -151,4 +152,27 @@ opacity:1;
 -webkit-animation: blink 0.7s infinite;
 -moz-animation: blink 0.7s infinite;
 animation: blink 0.7s infinite;
+}
+footer{
+  background-color: #212121;
+  height: 60px;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  line-height: 50px;
+  color: #aaa;
+  text-align: center;
+  width: 100%;
+}
+.footer-a{
+text-decoration:none;
+color:#fff;
+}
+a{
+ text-decoration: none;
+}
+.footer-a:hover{
+text-decoration:none;
+color:#fff;
+opacity:0.7;
 }
