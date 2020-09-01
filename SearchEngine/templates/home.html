@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}{{block.super}} HomePage {% endblock %}
 {% block content %}
+<div class="container">
+    <div class="center">
+<span id="typed" style="font-size:35px;"></span>
+    </div>
+</div>
 <div class="wrapper">
     <form action="{% url 'Result' %}" method="post">
         {% csrf_token %}
