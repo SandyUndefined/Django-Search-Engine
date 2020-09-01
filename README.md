@@ -28,7 +28,7 @@ Step 5: `manage.py runserver` or `python manage.py runserver`.
 Step 6:  Open browser and type `http://127.0.0.1:8000/`.
 
 ## Bugs to be fixed
-&check; Remove ad links
+- [X] Remove ad links
 - [ ] Yahoo returning `request.code` 500 
 - [ ] Can scrape to next or given set of pages
 
