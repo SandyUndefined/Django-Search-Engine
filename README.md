@@ -44,7 +44,7 @@ To fix a bug or create new feature, follow these steps:
 
 4. Commit your changes(`git add -a`,`git commit -m 'New feature'`)
 
-5. Push to branch
+5. Push to branch (`git push origin feature`)
 
 6. Create a pull request
 
