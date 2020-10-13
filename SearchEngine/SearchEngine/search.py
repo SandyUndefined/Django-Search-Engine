@@ -10,7 +10,7 @@ def google(s):
     headers = {"user-agent": USER_AGENT}
     r = requests.get("https://www.google.com/search?q=" + s, headers=headers)
     soup = BeautifulSoup(r.content, "html.parser")
-    for g in soup.find_all('div', class_='r'):
+    for g in soup.find_all('div', class_='yuRUbf'):
         a = g.find('a')
         t = g.find('h3')
         links.append(a.get('href'))
