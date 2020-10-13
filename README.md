@@ -29,7 +29,7 @@ Step 6:  Open browser and type `http://127.0.0.1:8000/`
 
 ## Bugs to be fixed
 - [X] Remove ad links
-- [ ] Yahoo returning `request.code` 500 
+- [X] Yahoo returning `request.code` 500 
 - [ ] Can scrape to next or given set of pages
 
 ## Feel free to Contribute
