@@ -62,3 +62,41 @@ def ecosia(s):
         text.append(a.text)
         links.append(a.get('href'))
     return links, text
+
+def bing(search):
+    userAgent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36')
+    headers = {'user-agent' : userAgent}
+    URL = ('https://www.bing.com/search?q='+search)
+    request = requests.get(URL, headers=headers)
+
+    soup = BeautifulSoup(request.content, "html.parser")
+    results = []
+    texts = []
+
+    for i in soup.find_all('li', {'class' : 'b_algo'}):
+        link = i.find_all('a')
+        link_text = i.find('a')
+        links = link[0]['href']
+        results.append(links)
+        texts.append(link_text.text)
+
+    return(results, texts)
+
+def givewater(search):
+    userAgent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36')
+    URL = ('https://search.givewater.com/serp?q='+search)
+    headers = {'user-agent' : userAgent}
+    request = requests.get(URL, headers=headers)
+    
+    soup = BeautifulSoup(request.content, 'html.parser')
+    results = []
+    texts = []
+
+    for i in soup.find_all('div', {'class' : 'web-bing__result'}):
+        link = i.find_all('a')
+        link_text = i.find('a')
+        links = link[0]['href']
+        results.append(links)
+        texts.append(link_text.text)
+    
+    return(results, texts)
