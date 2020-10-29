@@ -16,7 +16,7 @@
 </nav>
 <div class="container" style="margin-bottom: 85px;">
   <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-3">
+    <div class="col-xs-12 col-sm-6 col-md-2">
       <h4 class="panel panel-blue text-center" >Google</h4>
         <div class="justify-content-center">
           {% for i,j in google %}
@@ -24,7 +24,7 @@
         {% endfor %}
         </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-3">
+    <div class="col-xs-12 col-sm-6 col-md-2">
       <h4  class="panel panel-blue text-center" >Yahoo</h4>
       <div class="justify-content-center">
           {% for i,j in yahoo %}
@@ -32,7 +32,7 @@
         {% endfor %}
         </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-3">
+    <div class="col-xs-12 col-sm-6 col-md-2">
       <h4  class="panel panel-blue text-center" >DuckDuckGo</h4>
       <div class="justify-content-center">
           {% for i,j in duck %}
@@ -40,13 +40,30 @@
         {% endfor %}
         </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-3">
+    <div class="col-xs-12 col-sm-6 col-md-2">
       <h4  class="panel panel-blue text-center" >Ecosia</h4>
       <div class="justify-content-center">
           {% for i,j in ecosia %}
          <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
         {% endfor %}
         </div>
+    </div>
+  <div class="col-xs-12 col-sm-6 col-md-2">
+    <h4  class="panel panel-blue text-center" >Bing</h4>
+    <div class="justify-content-center">
+        {% for i,j in bing %}
+       <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+      {% endfor %}
+      </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 col-md-2">
+    <h4  class="panel panel-blue text-center" >Givewater</h4>
+    <div class="justify-content-center">
+        {% for i,j in givewater %}
+       <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+      {% endfor %}
+      </div>
     </div>
   </div>
 </div>

@@ -6,6 +6,8 @@ _Scrapes links and text from different search engine and Displays it on a webpag
 - Yahoo
 - DuckDuckGo
 - Ecosia
+- Bing
+- Givewater
 
 ## Features
 1. Removed Ad links.
