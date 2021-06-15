@@ -1,7 +1,11 @@
 # Django-Search-Engine
+
 _Scrapes links and text from different search engine and Displays it on a webpage._
 
+DEMO: https://djangosearchengine.herokuapp.com/
+
 ## Supported Search engine
+
 - Google
 - Yahoo
 - DuckDuckGo
@@ -10,6 +14,7 @@ _Scrapes links and text from different search engine and Displays it on a webpag
 - Givewater
 
 ## Features
+
 1. Removed Ad links.
 2. Scrap to the next page.(Incomplete)
 
@@ -27,12 +32,11 @@ Step 4: `cd SearchEngine`
 
 Step 5: `manage.py runserver` or `python manage.py runserver`
 
-Step 6:  Open browser and type `http://127.0.0.1:8000/`
+Step 6: Open browser and type `http://127.0.0.1:8000/`
 
-## Bugs to be fixed
-- [X] Remove ad links
-- [X] Yahoo returning `request.code` 500 
-- [ ] Can scrape to next or given set of pages
+## TODO
+
+- Add more Search Engine.
 
 ## Feel free to Contribute
 
