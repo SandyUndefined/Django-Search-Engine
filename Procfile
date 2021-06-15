@@ -1,1 +1,1 @@
-web: gunicorn SearchEngine:app --log-file - --log-level debug
+web: gunicorn SearchEngine.wsgi --log-file -
