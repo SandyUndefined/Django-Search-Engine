@@ -3,12 +3,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
     <link href='{% static "css/bootstrap.css" %}' rel="stylesheet">
     <link href='{% static "css/fontawesome.css" %}' rel="stylesheet">
     <link href='{% static "css/style.css" %}' rel="stylesheet">
 </head>
 <body>
+<div id="loading-overlay" class="loading-overlay hidden">
+    <div class="shimmer-row"></div>
+    <div class="shimmer-row short"></div>
+    <div class="shimmer-grid">
+        <div class="shimmer-card"></div>
+        <div class="shimmer-card"></div>
+        <div class="shimmer-card"></div>
+    </div>
+</div>
+<div class="sticky-search">
+  <form action="{% url 'Result' %}" method="get" class="sticky-form loading-trigger">
+    <input type="text" name="search" placeholder="Search again..." value="{{ query|default_if_none:'' }}" />
+    <button type="submit">Go</button>
+  </form>
+</div>
 {% block content %} {% endblock content %}
 <script src='{% static "js/popper.js" %}'></script>
 <script src='{% static "js/jquery.js" %}'></script>

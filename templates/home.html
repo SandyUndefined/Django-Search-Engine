@@ -1,19 +1,145 @@
 {% extends 'base.html' %}
 {% block title %}{{block.super}} HomePage {% endblock %}
 {% block content %}
-<div class="container">
-    <div class="center">
-<span id="typed" style="font-size:35px;"></span>
+<div class="page">
+  <header class="hero">
+    <div class="hero__text">
+      <p class="eyebrow">Meta search · Privacy-first</p>
+      <h1 class="headline">Find signal across the web.</h1>
+      <p class="lede">We fetch clean links from multiple engines, strip the noise, and put the best starting points in one view.</p>
+      <div id="typed" class="typed-line"></div>
+      <ul class="pill-list">
+        <li class="pill">Ad-free results</li>
+        <li class="pill">Multi-source</li>
+        <li class="pill">Fast cache</li>
+      </ul>
     </div>
+    <div class="hero__card">
+      <form class="search-form loading-trigger" action="{% url 'Result' %}" method="get">
+        <label class="field-label">What are you looking for?</label>
+        <div class="input-row">
+          <input type="text" class="search-input" placeholder="e.g. best noise-cancelling headphones" name="search" required>
+          <button type="submit" class="primary-btn">Search</button>
+        </div>
+        <div class="input-row">
+          <div class="field-group" style="flex:1;">
+            <div class="field-label">Limit to site (optional)</div>
+            <input type="text" class="search-input" name="site" placeholder="example.com">
+          </div>
+          <div class="field-group" style="flex:1;">
+            <div class="field-label">Exclude terms (comma separated)</div>
+            <input type="text" class="search-input" name="exclude" placeholder="sponsored, review, ads">
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Choose providers</div>
+          <div class="chip-row">
+            {% for provider in provider_options %}
+              <label class="chip-toggle">
+                <input type="checkbox" name="providers" value="{{ provider.key }}" checked>
+                <span>{{ provider.label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Quick filters</div>
+          <div class="chip-row">
+            <label class="chip-toggle">
+              <input type="radio" name="content" value="" checked>
+              <span>All</span>
+            </label>
+            <label class="chip-toggle">
+              <input type="radio" name="content" value="articles">
+              <span>Articles</span>
+            </label>
+            <label class="chip-toggle">
+              <input type="radio" name="content" value="videos">
+              <span>Videos</span>
+            </label>
+            <label class="chip-toggle">
+              <input type="radio" name="content" value="docs">
+              <span>Docs</span>
+            </label>
+          </div>
+          <div class="chip-row" style="margin-top:8px;">
+            <label class="chip-toggle">
+              <input type="radio" name="time" value="" checked>
+              <span>Any time</span>
+            </label>
+            <label class="chip-toggle">
+              <input type="radio" name="time" value="24h">
+              <span>Past 24h</span>
+            </label>
+            <label class="chip-toggle">
+              <input type="radio" name="time" value="week">
+              <span>Past week</span>
+            </label>
+            <label class="chip-toggle">
+              <input type="radio" name="time" value="month">
+              <span>Past month</span>
+            </label>
+          </div>
+          <div class="chip-row" style="margin-top:8px;">
+            <label class="chip-toggle">
+              <input type="checkbox" name="safe" value="on" checked>
+              <span>Safe mode</span>
+            </label>
+          </div>
+        </div>
+      </form>
+      {% if recent_queries %}
+      <div class="recent-searches">
+        <div class="field-label">Recent searches</div>
+        <div class="chip-row">
+          {% for q in recent_queries %}
+            <button type="button" class="chip ghost recent-chip" data-query="{{ q }}">{{ q }}</button>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      {% if saved_searches %}
+      <div class="recent-searches">
+        <div class="field-label">Saved searches</div>
+        <div class="saved-list">
+          {% for saved in saved_searches %}
+            <form action="{% url 'Result' %}" method="get" class="saved-pill">
+              <input type="hidden" name="search" value="{{ saved.search }}">
+              {% if saved.site %}<input type="hidden" name="site" value="{{ saved.site }}">{% endif %}
+              {% if saved.exclude %}<input type="hidden" name="exclude" value="{{ saved.exclude }}">{% endif %}
+              {% for p in saved.providers %}
+                <input type="hidden" name="providers" value="{{ p }}">
+              {% endfor %}
+              <button type="submit" class="chip ghost">
+                {{ saved.search }}{% if saved.site %} · site:{{ saved.site }}{% endif %}
+              </button>
+            </form>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <section class="feature-grid">
+    <div class="feature-card">
+      <p class="eyebrow">Unified</p>
+      <h3>All engines, one screen</h3>
+      <p>Compare Google, Bing, DuckDuckGo, Ecosia, Yahoo, and GiveWater side by side without juggling tabs.</p>
+    </div>
+    <div class="feature-card">
+      <p class="eyebrow">Resilient</p>
+      <h3>Handles outages gracefully</h3>
+      <p>Provider hiccups are caught and surfaced so the rest of your results still show up fast.</p>
+    </div>
+    <div class="feature-card">
+      <p class="eyebrow">Fast</p>
+      <h3>Cached & rate-limited</h3>
+      <p>Short-term caching and throttling keep responses quick and avoid hammering upstream engines.</p>
+    </div>
+  </section>
 </div>
-<div class="wrapper">
-    <form action="{% url 'Result' %}" method="post">
-        {% csrf_token %}
-    <input type="text" placeholder="Search..." name="search">
-    <div class="search"></div>
-    </form>
-</div>
-<footer>
-        <p>Copyright &copy; | All Rights Reserved by <a class="footer-a" href="https://github.com/SandyUndefined/Django-Search-Engine">Sandeep Sharma</a></p>
+<footer class="footer">
+  <p>Built for curious minds · <a class="footer-a" href="https://github.com/SandyUndefined/Django-Search-Engine" target="_blank" rel="noopener">GitHub</a></p>
 </footer>
 {% endblock content %}

@@ -1,102 +1,168 @@
+import logging
+
 import requests
 from bs4 import BeautifulSoup
+from requests import RequestException
+
+logger = logging.getLogger(__name__)
+
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+BASE_HEADERS = {
+    "user-agent": USER_AGENT,
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "accept-language": "en-US,en;q=0.9",
+}
+REQUEST_TIMEOUT = 6
 
 
-# done
-def google(s):
+def _get_soup(url, headers=None, allow_blocked=False):
+    """Fetch a URL and return a BeautifulSoup parser."""
+    merged_headers = BASE_HEADERS.copy()
+    if headers:
+        merged_headers.update(headers)
+    response = requests.get(url, headers=merged_headers, timeout=REQUEST_TIMEOUT)
+    if response.status_code == 403 and allow_blocked:
+        logger.info("Request blocked with 403 for url=%s; returning empty", url)
+        return None
+    response.raise_for_status()
+    return BeautifulSoup(response.text, "html.parser")
+
+
+def google(query):
     links = []
     text = []
-    USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36'
-    headers = {"user-agent": USER_AGENT}
-    r = requests.get("https://www.google.com/search?q=" + s, headers=headers)
-    soup = BeautifulSoup(r.content, "html.parser")
-    for g in soup.find_all('div', class_='yuRUbf'):
-        a = g.find('a')
-        t = g.find('h3')
-        links.append(a.get('href'))
-        text.append(t.text)
+    try:
+        soup = _get_soup(f"https://www.google.com/search?q={query}")
+    except RequestException as exc:
+        logger.warning("Google search failed: %s", exc)
+        return links, text
+
+    for result in soup.find_all("div", class_="yuRUbf"):
+        anchor = result.find("a")
+        heading = result.find("h3")
+        if not anchor or not heading:
+            continue
+        href = anchor.get("href")
+        title = heading.get_text(strip=True)
+        if href and title:
+            links.append(href)
+            text.append(title)
     return links, text
 
 
-# Somethime request.code == 500
-def yahoo(s):
+def yahoo(query):
     links = []
     text = []
-    url = "https://search.yahoo.com/search?q=" + s + "&n=" + str(10)
-    raw_page = requests.get(url)
-    print(raw_page)
-    soup = BeautifulSoup(raw_page.text, "html.parser")
+    url = f"https://search.yahoo.com/search?q={query}&n=10"
+    try:
+        soup = _get_soup(url)
+    except RequestException as exc:
+        logger.warning("Yahoo search failed: %s", exc)
+        return links, text
+
     for link in soup.find_all(attrs={"class": "ac-algo fz-l ac-21th lh-24"}):
-        links.append(link.get('href'))
-        text.append(link.text)
+        href = link.get("href")
+        title = link.get_text(strip=True)
+        if href and title:
+            links.append(href)
+            text.append(title)
     return links, text
 
 
-# done
-def duck(s):
+def duck(query):
     links = []
     text = []
-    userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36'
-    headers = {'user-agent': userAgent}
-    r = requests.get('https://duckduckgo.com/html/?q=' + s, headers=headers)
-    s = BeautifulSoup(r.content, "html.parser")
-    for i in s.find_all('div', attrs={'class': 'results_links_deep'}):
-        a = i.find('a', attrs={'class': 'result__a'})
-        links.append(a.get('href'))
-        text.append(a.text)
-    links.pop(0)
-    text.pop(0)
+    try:
+        soup = _get_soup(f"https://duckduckgo.com/html/?q={query}")
+    except RequestException as exc:
+        logger.warning("DuckDuckGo search failed: %s", exc)
+        return links, text
+
+    # DuckDuckGo markup changes frequently; tolerate missing nodes.
+    for result in soup.find_all("div", attrs={"class": "result__body"}):
+        anchor = result.find("a", attrs={"class": "result__a"})
+        if not anchor:
+            continue
+        href = anchor.get("href")
+        title = anchor.get_text(strip=True)
+        if href and title:
+            links.append(href)
+            text.append(title)
     return links, text
 
 
-# done
-def ecosia(s):
+def ecosia(query):
     links = []
     text = []
-    userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36'
-    headers = {'user-agent': userAgent}
-    r = requests.get('https://www.ecosia.org/search?q=' + s, headers=headers)
-    soup = BeautifulSoup(r.text, "html.parser")
-    for i in soup.find_all("h2", attrs={'class': 'result-firstline-title'}):
-        a = i.find("a", attrs={'class': 'js-result-title'})
-        text.append(a.text)
-        links.append(a.get('href'))
+    try:
+        soup = _get_soup(f"https://www.ecosia.org/search?q={query}", allow_blocked=True)
+    except RequestException as exc:
+        logger.warning("Ecosia search failed: %s", exc)
+        return links, text
+    if soup is None:
+        return links, text
+
+    for heading in soup.find_all("h2", attrs={"class": "result-firstline-title"}):
+        anchor = heading.find("a", attrs={"class": "js-result-title"})
+        if not anchor:
+            continue
+        href = anchor.get("href")
+        title = anchor.get_text(strip=True)
+        if href and title:
+            links.append(href)
+            text.append(title)
     return links, text
 
-def bing(search):
-    userAgent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36')
-    headers = {'user-agent' : userAgent}
-    URL = ('https://www.bing.com/search?q='+search)
-    request = requests.get(URL, headers=headers)
 
-    soup = BeautifulSoup(request.content, "html.parser")
+def bing(query):
+    try:
+        soup = _get_soup(f"https://www.bing.com/search?q={query}")
+    except RequestException as exc:
+        logger.warning("Bing search failed: %s", exc)
+        return [], []
+
+    results = []
+    texts = []
+    for item in soup.find_all("li", {"class": "b_algo"}):
+        anchor = item.find("a")
+        if not anchor:
+            continue
+        href = anchor.get("href")
+        title = anchor.get_text(strip=True)
+        if href and title:
+            results.append(href)
+            texts.append(title)
+
+    return results, texts
+
+
+def givewater(query):
+    try:
+        soup = _get_soup(
+            f"https://search.givewater.com/serp?q={query}",
+            headers={"referer": "https://search.givewater.com/"},
+            allow_blocked=True,
+        )
+    except RequestException as exc:
+        logger.warning("GiveWater search failed: %s", exc)
+        return [], []
+    if soup is None:
+        return [], []
+
     results = []
     texts = []
 
-    for i in soup.find_all('li', {'class' : 'b_algo'}):
-        link = i.find_all('a')
-        link_text = i.find('a')
-        links = link[0]['href']
-        results.append(links)
-        texts.append(link_text.text)
+    for item in soup.find_all("div", {"class": "web-bing__result"}):
+        anchor = item.find("a")
+        if not anchor:
+            continue
+        href = anchor.get("href")
+        title = anchor.get_text(strip=True)
+        if href and title:
+            results.append(href)
+            texts.append(title)
 
-    return(results, texts)
-
-def givewater(search):
-    userAgent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36')
-    URL = ('https://search.givewater.com/serp?q='+search)
-    headers = {'user-agent' : userAgent}
-    request = requests.get(URL, headers=headers)
-    
-    soup = BeautifulSoup(request.content, 'html.parser')
-    results = []
-    texts = []
-
-    for i in soup.find_all('div', {'class' : 'web-bing__result'}):
-        link = i.find_all('a')
-        link_text = i.find('a')
-        links = link[0]['href']
-        results.append(links)
-        texts.append(link_text.text)
-    
-    return(results, texts)
+    return results, texts

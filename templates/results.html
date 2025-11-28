@@ -1,73 +1,185 @@
 {% extends 'base.html' %}
 {% block title %}{{block.super}} Results {% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3 mb-5">
-  <a class="navbar-brand ml-4" href="{% url 'Home' %}"><i class="fas fa-arrow-left fa-2x"></i></a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<div class="page results-page">
+  <nav class="topbar">
+    <a class="back-link" href="{% url 'Home' %}">← New search</a>
+    <div class="brand">Django Search Engine</div>
+  </nav>
 
-  <div class="container d-flex justify-content-center">
-      <h4 class="navbar-text text-white">
-    Django Search Engine
-  </h4>
-  </div>
-
-</nav>
-<div class="container" style="margin-bottom: 85px;">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-2">
-      <h4 class="panel panel-blue text-center" >Google</h4>
-        <div class="justify-content-center">
-          {% for i,j in google %}
-         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+  <section class="results-summary">
+    <div>
+      <p class="eyebrow">Search</p>
+      <h2 class="headline">“{{ query }}”</h2>
+      <p class="lede">Providers queried:</p>
+      <div class="chip-row">
+        {% for provider in providers %}
+          <span class="chip ghost">{{ provider|capfirst }}</span>
         {% endfor %}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-md-2">
-      <h4  class="panel panel-blue text-center" >Yahoo</h4>
-      <div class="justify-content-center">
-          {% for i,j in yahoo %}
-         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
-        {% endfor %}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-md-2">
-      <h4  class="panel panel-blue text-center" >DuckDuckGo</h4>
-      <div class="justify-content-center">
-          {% for i,j in duck %}
-         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
-        {% endfor %}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-md-2">
-      <h4  class="panel panel-blue text-center" >Ecosia</h4>
-      <div class="justify-content-center">
-          {% for i,j in ecosia %}
-         <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
-        {% endfor %}
-        </div>
-    </div>
-  <div class="col-xs-12 col-sm-6 col-md-2">
-    <h4  class="panel panel-blue text-center" >Bing</h4>
-    <div class="justify-content-center">
-        {% for i,j in bing %}
-       <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
-      {% endfor %}
       </div>
+      {% if site_filter or exclude_terms %}
+      <div class="chip-row" style="margin-top:10px;">
+        {% if site_filter %}<span class="chip">site:{{ site_filter }}</span>{% endif %}
+        {% for term in exclude_terms %}
+          <span class="chip ghost">-{{ term }}</span>
+        {% endfor %}
+        {% if content_filter %}<span class="chip ghost">Content: {{ content_filter|capfirst }}</span>{% endif %}
+        {% if time_filter %}<span class="chip ghost">Time: {{ time_filter }}</span>{% endif %}
+        {% if safe_mode %}<span class="chip ghost">Safe</span>{% else %}<span class="chip ghost">NSFW</span>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% if errors %}
+      <div class="alert-card">
+        <strong>Heads up:</strong> Some providers are temporarily unavailable.
+      </div>
+    {% endif %}
+  </section>
+
+  <div class="action-row">
+    <form action="{% url 'SaveSearch' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="search" value="{{ query }}">
+      <input type="hidden" name="site" value="{{ site_filter }}">
+      <input type="hidden" name="exclude" value="{{ exclude_terms|join:',' }}">
+      <input type="hidden" name="providers_csv" value="{{ providers|join:',' }}">
+      <button type="submit" class="primary-btn">Save this search</button>
+    </form>
+    <button class="chip ghost" id="copy-link-btn">Copy link</button>
   </div>
 
-  <div class="col-xs-12 col-sm-6 col-md-2">
-    <h4  class="panel panel-blue text-center" >Givewater</h4>
-    <div class="justify-content-center">
-        {% for i,j in givewater %}
-       <a href="{{ i }}" class="btn mt-3 w-100">{{ j }}</a><br>
+  <section class="fused-section">
+    <div class="section-header">
+      <div>
+        <p class="eyebrow">Consensus</p>
+        <h3>Top overlaps across engines</h3>
+      </div>
+      <form class="sort-controls loading-trigger" method="get" action="{% url 'Result' %}">
+        <input type="hidden" name="search" value="{{ query }}">
+        {% if site_filter %}<input type="hidden" name="site" value="{{ site_filter }}">{% endif %}
+        {% if exclude_terms %}<input type="hidden" name="exclude" value="{{ exclude_terms|join:',' }}">{% endif %}
+        {% if content_filter %}<input type="hidden" name="content" value="{{ content_filter }}">{% endif %}
+        {% if time_filter %}<input type="hidden" name="time" value="{{ time_filter }}">{% endif %}
+        {% if not safe_mode %}<input type="hidden" name="safe" value="off">{% endif %}
+        {% for p in providers %}<input type="hidden" name="providers" value="{{ p }}">{% endfor %}
+        <label class="field-label" for="fused_sort">Sort</label>
+        <select id="fused_sort" name="fused_sort" class="sort-select" onchange="this.form.submit()">
+          <option value="consensus" {% if fused_sort == 'consensus' %}selected{% endif %}>Consensus (providers)</option>
+          <option value="domain" {% if fused_sort == 'domain' %}selected{% endif %}>Domain A-Z</option>
+          <option value="title" {% if fused_sort == 'title' %}selected{% endif %}>Title A-Z</option>
+        </select>
+      </form>
+    </div>
+    {% if fused_results %}
+    <div class="fused-grid">
+      {% for item in fused_results %}
+      <article class="fused-card">
+        <div class="fused-card__header">
+          <div class="favicon">
+            {% if item.domain %}
+            <img src="https://www.google.com/s2/favicons?sz=64&domain={{ item.domain }}" alt="" />
+            {% else %}
+            <span class="favicon-placeholder"></span>
+            {% endif %}
+          </div>
+          <div class="fused-meta">
+            <span class="domain">{{ item.domain|default:"" }}</span>
+            <span class="chip ghost">Seen in {{ item.providers_list|length }} {{ item.providers_list|length|pluralize:"engine,engines" }}</span>
+          </div>
+        </div>
+        <a href="{{ item.url }}" target="_blank" rel="noopener" class="fused-title">{{ item.title }}</a>
+        {% if item.snippet %}
+          <p class="muted">{{ item.snippet }}</p>
+        {% endif %}
+        <div class="provider-badges">
+          {% for provider in item.providers_list %}
+            <span class="chip ghost">{{ provider }}</span>
+          {% endfor %}
+        </div>
+      </article>
       {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted">No overlapping results yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="provider-grid">
+    {% for provider in provider_results %}
+      <article class="provider-card {% if provider.error %}error-card{% endif %}">
+        <div class="provider-card__header">
+          <span class="provider-tag">{{ provider.label }}</span>
+          {% if provider.error %}
+            <span class="badge warn">Unavailable</span>
+          {% else %}
+            <span class="badge ok">Live</span>
+          {% endif %}
+          {% if provider.stat %}
+              <span class="provider-meta">{{ provider.stat.result_count }} results · {{ provider.stat.duration_ms }} ms</span>
+          {% endif %}
+        </div>
+        {% if not provider.error and provider.results %}
+        <div class="provider-actions">
+          <form action="#" method="post" class="provider-action-form" data-provider="{{ provider.label }}">
+            <button type="button" class="chip ghost copy-provider" data-provider="{{ provider.label }}">Copy URLs</button>
+            <button type="button" class="chip ghost open-all" data-provider="{{ provider.label }}">Open all</button>
+          </form>
+        </div>
+        {% elif provider.error %}
+        <div class="provider-actions">
+          <form class="inline-form loading-trigger" method="get" action="{% url 'Result' %}">
+            <input type="hidden" name="search" value="{{ query }}">
+            {% if site_filter %}<input type="hidden" name="site" value="{{ site_filter }}">{% endif %}
+            {% if exclude_terms %}<input type="hidden" name="exclude" value="{{ exclude_terms|join:',' }}">{% endif %}
+            {% if content_filter %}<input type="hidden" name="content" value="{{ content_filter }}">{% endif %}
+            {% if time_filter %}<input type="hidden" name="time" value="{{ time_filter }}">{% endif %}
+            {% if not safe_mode %}<input type="hidden" name="safe" value="off">{% endif %}
+            <input type="hidden" name="providers" value="{{ provider.key }}">
+            <button type="submit" class="chip ghost">Retry {{ provider.label }}</button>
+          </form>
+        </div>
+        {% endif %}
+        <div class="provider-card__body">
+          {% if provider.results %}
+            <ul class="result-list">
+              {% for i,j in provider.results %}
+                <li>
+                  <a href="{{ i }}" target="_blank" rel="noopener" class="result-link">
+                    <span class="result-title">{{ j }}</span>
+                    <span class="result-url">{{ i }}</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="muted">{% if provider.error %}{{ provider.error }}{% else %}No results returned for this provider.{% endif %}</p>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+
+  <section class="analytics">
+    <div class="section-header">
+      <div>
+        <p class="eyebrow">Diagnostics</p>
+        <h3>Per-provider performance</h3>
       </div>
     </div>
-  </div>
+    <div class="analytics-grid">
+      {% for stat in analytics %}
+      <div class="feature-card">
+        <div class="provider-card__header">
+          <span class="provider-tag">{{ stat.label }}</span>
+          <span class="badge {% if stat.error %}warn{% else %}ok{% endif %}">{% if stat.error %}Error{% else %}OK{% endif %}</span>
+        </div>
+        <p class="muted">{{ stat.result_count }} results · {{ stat.duration_ms }} ms</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
 </div>
-<footer>
-        <p>Copyright &copy; | All Rights Reserved by <a class="footer-a" href="https://github.com/SandyUndefined/Django-Search-Engine">Sandeep Sharma</a></p>
+<footer class="footer">
+  <p>Built for curious minds · <a class="footer-a" href="https://github.com/SandyUndefined/Django-Search-Engine" target="_blank" rel="noopener">GitHub</a></p>
 </footer>
 {% endblock content %}
